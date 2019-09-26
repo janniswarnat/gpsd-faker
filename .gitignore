@@ -1,0 +1,8 @@
+#IntelliJ
+.idea
+
+# Dependency directories
+node_modules
+
+docker-compose.yml
+

@@ -1,0 +1,12 @@
+version: '3.3'
+services:
+  gpsfaker1:
+    image: "janniswarnat/gpsfaker"
+    volumes:
+      - ./config.json:/gpsd-faker/config.json
+    environment:
+      - PUBLISH_EVERY=5
+      - MQTT_URL=mqtts://***:8883
+      - TRACKER_ID=XV
+      - MQTT_USERNAME=***
+      - MQTT_PASSWORD=***

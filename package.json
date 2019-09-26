@@ -1,0 +1,9 @@
+{
+  "name": "gpsd-faker",
+  "version": "1.0.0",
+  "dependencies": {
+    "gpsd-fake": "latest",
+    "node-gpsd": "latest",
+    "mqtt": "latest"
+  }
+}
