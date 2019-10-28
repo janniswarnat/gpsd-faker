@@ -1,7 +1,7 @@
 version: '3.3'
 services:
   gpsfaker1:
-    image: "janniswarnat/gpsfaker"
+    image: "janniswarnat/gpsd-faker"
     volumes:
       - ./config.json:/gpsd-faker/config.json
     environment:
