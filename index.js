@@ -1,6 +1,6 @@
 const gpsdFake = require('gpsd-fake');
-const fs = require ('fs');
-const tls = require ('tls');
+const fs = require('fs');
+const tls = require('tls');
 const gpsd = require('node-gpsd');
 const mqtt = require('mqtt')
 let messageCount = 0;
@@ -9,28 +9,33 @@ const mqttUrl = process.env.MQTT_URL;
 const mqttUsername = process.env.MQTT_USERNAME;
 const mqttPassword = process.env.MQTT_PASSWORD;
 const trackerId = process.env.TRACKER_ID;
-console.log('publishEvery',publishEvery);
-console.log('mqttUrl',mqttUrl);
-console.log('trackerId',trackerId);
+console.log('publishEvery', publishEvery);
+console.log('mqttUrl', mqttUrl);
+console.log('trackerId', trackerId);
+
+function getRandomInt(max) {
+    return Math.floor(Math.random() * Math.floor(max));
+}
 
 gpsdFake({
     port: 8085,
-   // tmpFile: 'gpsd-fake-last-session.json', // might be relative or absolute
+    // tmpFile: 'gpsd-fake-last-session.json', // might be relative or absolute
     configFile: 'config.json' // might be relative or absolute
 });
 
 let listener = new gpsd.Listener({
     port: 8085,
     hostname: 'localhost',
-    logger:  {
-        info: function() {},
+    logger: {
+        info: function () {
+        },
         warn: console.warn,
         error: console.error
     },
     parse: true
 });
 
-let client = mqtt.connect(mqttUrl,{username: mqttUsername, password: mqttPassword/*, secureContext: context*/ });
+let client = mqtt.connect(mqttUrl, {username: mqttUsername, password: mqttPassword/*, secureContext: context*/});
 
 client.on('reconnect', function () {
     console.log("reconnect");
@@ -69,13 +74,12 @@ client.on('connect', function () {
     console.log("client connect");
 });
 
-listener.connect(function() {
+listener.connect(function () {
     console.log('listener connect');
 });
 //gpsd events like described in the gpsd documentation. All gpsd events like: TPV, SKY, INFO and DEVICE can be emitted. To receive all TPV events just add
 
-listener.on('TPV', function(data)
-{
+listener.on('TPV', function (data) {
     //console.log(data);
     let message = {
         Bandwidth: 125000,
@@ -108,26 +112,26 @@ listener.on('TPV', function(data)
         Spreadingfactor: 10,
         Time: 2428251756
     };
-    if(messageCount % publishEvery === 0) {
-        client.publish('lora/data/'+trackerId, JSON.stringify(message));
-        client.publish('lora/panic/'+trackerId, JSON.stringify(message));
+    if (messageCount % publishEvery === 0) {
+        client.publish('lora/data/' + trackerId, JSON.stringify(message));
+
+        if (getRandomInt(100) > 90) {
+            client.publish('lora/panic/' + trackerId, JSON.stringify(message));
+        }
     }
     messageCount++;
 });
 
-listener.on('SKY', function(data)
-{
+listener.on('SKY', function (data) {
     //console.log(data);
 });
 
-listener.on('INFO', function(data)
-{
+listener.on('INFO', function (data) {
     //console.log(data);
 });
 
-listener.on('DEVICE', function(data)
-{
+listener.on('DEVICE', function (data) {
     //console.log(data);
 });
 
-listener.watch({ class: 'WATCH', json: true, nmea: false });
+listener.watch({class: 'WATCH', json: true, nmea: false});
