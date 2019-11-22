@@ -115,7 +115,7 @@ listener.on('TPV', function (data) {
     if (messageCount % publishEvery === 0) {
         client.publish('lora/data/' + trackerId, JSON.stringify(message));
 
-        if (getRandomInt(100) > 90) {
+        if (getRandomInt(100) > 95) {
             client.publish('lora/panic/' + trackerId, JSON.stringify(message));
         }
     }
