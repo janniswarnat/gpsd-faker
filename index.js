@@ -110,7 +110,7 @@ listener.on('TPV', function(data)
     };
     if(messageCount % publishEvery === 0) {
         client.publish('lora/data/'+trackerId, JSON.stringify(message));
-        client.publish('lora/alert/'+trackerId, JSON.stringify(message));
+        client.publish('lora/panic/'+trackerId, JSON.stringify(message));
     }
     messageCount++;
 });
