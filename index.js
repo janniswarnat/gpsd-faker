@@ -83,9 +83,9 @@ listener.connect(function () {
 
 listener.on('TPV', function (data) {
     //console.log(data);
-    console.log(messageCount);
+    //console.log(messageCount);
     let index = messageCount % trackerIds.length;
-    console.log(index);
+    //console.log(index);
     let message = {
         Bandwidth: 125000,
         BatteryLevel: 4.07999992370605,
