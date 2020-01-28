@@ -8,10 +8,12 @@ const publishEvery = process.env.PUBLISH_EVERY;
 const mqttUrl = process.env.MQTT_URL;
 const mqttUsername = process.env.MQTT_USERNAME;
 const mqttPassword = process.env.MQTT_PASSWORD;
-const trackerId = process.env.TRACKER_ID;
+const trackerIds = process.env.TRACKER_IDS.split(',');
 console.log('publishEvery', publishEvery);
 console.log('mqttUrl', mqttUrl);
-console.log('trackerId', trackerId);
+trackerIds.forEach(function (trackerId, index) {
+    console.log('trackerId '+trackerId);
+});
 
 function getRandomInt(max) {
     return Math.floor(Math.random() * Math.floor(max));
@@ -81,6 +83,9 @@ listener.connect(function () {
 
 listener.on('TPV', function (data) {
     //console.log(data);
+    console.log(messageCount);
+    let index = messageCount % trackerIds.length;
+    console.log(index);
     let message = {
         Bandwidth: 125000,
         BatteryLevel: 4.07999992370605,
@@ -100,7 +105,7 @@ listener.on('TPV', function (data) {
             Time: "09/23/2019 13:35:15"
         },
         Host: "loranode1",
-        Name: trackerId,
+        Name: trackerIds[index],
         PacketRssi: 0,
         Receivedtime: "09/23/2019 13:35:13",
         Recieverinterface: 6,
@@ -113,10 +118,10 @@ listener.on('TPV', function (data) {
         Time: 2428251756
     };
     if (messageCount % publishEvery === 0) {
-        client.publish('lora/data/' + trackerId, JSON.stringify(message));
+        client.publish('lora/data/' + trackerIds[index], JSON.stringify(message));
 
         if (getRandomInt(100) > 95) {
-            client.publish('lora/panic/' + trackerId, JSON.stringify(message));
+            client.publish('lora/panic/' + trackerIds[index], JSON.stringify(message));
         }
     }
     messageCount++;
